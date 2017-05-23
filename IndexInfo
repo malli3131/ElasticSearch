@@ -103,22 +103,26 @@ curl -XPUT 'localhost:9200/sales?pretty' -H 'Content-Type: application/json' -d'
  },
 "mappings": {
       "india": {
-         "_all": {
-            "analyzer": "custom_index_analyzer",
-            "search_analyzer": "custom_search_analyzer"
-         },
           "properties": {
             "name": {
-               "type": "text"
+               "type": "text",
+                "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
             },
             "title": {
-               "type": "text"
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
             },
             "author": {
-               "type": "string"
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
             },
             "location": {
-               "type": "string"
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
             }
            }
            }
@@ -134,3 +138,209 @@ curl -XPOST 'localhost:9200/sales/_analyze?pretty' -H 'Content-Type: application
   "analyzer": "standard",
    "name": "Nagamallikarjuna Inelu"
 }'
+
+
+
+curl -XPUT 'localhost:9200/twitter?pretty' -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "tweet": {
+      "properties": {
+        "message": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}'
+curl -XPUT 'localhost:9200/twitter/_mapping/user?pretty' -H 'Content-Type: application/json' -d'
+{
+  "properties": {
+    "name": {
+      "type": "text"
+    }
+  }
+}'
+
+curl -XPUT 'localhost:9200/twitter/_mapping/tweet?pretty' -H 'Content-Type: application/json' -d'
+{
+  "properties": {
+    "user_name": {
+      "type": "text"
+    }
+  }
+}'
+
+
+
+curl -XPUT 'localhost:9200/widas?pretty' -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "type_one": {
+      "properties": {
+        "text": { 
+          "type": "text",
+          "analyzer": "standard"
+        }
+      }
+    },
+    "type_two": {
+      "properties": {
+        "text": { 
+          "type": "text",
+          "analyzer": "standard"
+        }
+      }
+    }
+  }
+}'
+
+curl -XPUT 'localhost:9200/widas/_mapping/type_one?pretty' -H 'Content-Type: application/json' -d'
+{
+  "properties": {
+    "text": {
+      "type": "text",
+      "analyzer": "standard",
+      "search_analyzer": "whitespace"
+    }
+  }
+}'
+
+curl -XPUT "localhost:9200/carbook?pretty" -d '{
+  "settings": {
+      "analysis": {
+        "analyzer": {
+          "custom_index_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          },
+          "custom_search_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          }
+        },
+      "tokenizer": {
+        "custom_tokenizer": {
+          "type": "nGram",
+          "min_gram": 3,
+          "max_gram": 4
+        }
+      }
+    }
+  }
+ }
+
+curl -XPUT 'localhost:9200/carbook?pretty' -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 3,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    }
+  }
+}
+'
+curl -XPOST 'localhost:9200/widas/_analyze?pretty' -H 'Content-Type: application/json' -d'
+{
+  "analyzer": "standard",
+  "text": "2 Quick Foxes."
+}'
+
+
+
+curl -XGET 'localhost:9200/_analyze?pretty' -H 'Content-Type: application/json' -d'
+{
+  "analyzer" : "standard",
+  "text" : "this is a test"
+}
+'
+
+curl -XGET 'localhost:9200/twitter/_analyze?pretty' -H 'Content-Type: application/json' -d'
+{
+  "field" : "obj1.field1",
+  "text" : "this is a test"
+}'
+
+curl -XGET 'localhost:9200/_analyze?pretty' -H 'Content-Type: application/json' -d'
+{
+  "tokenizer" : "standard",
+  "filter" : ["snowball"],
+  "text" : "detailed output",
+  "explain" : true,
+  "attributes" : ["keyword"] 
+}'
+
+
+
+curl -XPUT 'localhost:9200/sales?pretty' -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "custom_index_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          },
+          "custom_search_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          }
+        },
+      "tokenizer": {
+        "custom_tokenizer": {
+          "type": "nGram",
+          "min_gram": 3,
+          "max_gram": 4
+        }
+      }
+    }
+  }
+ },
+"mappings": {
+      "india": {
+          "properties": {
+            "name": {
+               "type": "text",
+                "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
+            },
+            "title": {
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
+            },
+            "author": {
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
+            },
+            "location": {
+               "type": "text",
+               "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
+            }
+           }
+           }
+}
+}'
+
+curl -XGET 'localhost:9200/sales/_analyze?field=name&text=nagamallikarjuna'
