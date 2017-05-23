@@ -1,0 +1,33 @@
+Index Creation:
+---------------
+curl -XPUT 'localhost:9200/cidass?pretty' -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 3, 
+            "number_of_replicas" : 2 
+        }
+    }
+}'
+
+Index with fields:
+curl -XPUT 'localhost:9200/hadoop?pretty' -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "number_of_shards" : 1
+    },
+    "mappings" : {
+        "hdfs" : {
+            "properties" : {
+                "name" : { "type" : "text" },
+                "version" : {"type" : "string"}
+            }
+        }
+    }
+}'
+
+Listing Indexes:
+----------------
+
+curl -XGET 'localhost:9200/_cat/indices?v'
+
