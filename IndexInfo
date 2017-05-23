@@ -31,3 +31,106 @@ Listing Indexes:
 
 curl -XGET 'localhost:9200/_cat/indices?v'
 
+Get the fields from Index:
+--------------------------
+curl -XGET 'localhost:9200/sales/_mapping/?pretty'
+
+
+Deleting an Index:
+------------------
+curl -XDELETE 'localhost:9200/sales'
+
+
+curl -XPUT 'localhost:9200/sales?pretty' -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 3,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    }
+  }
+},
+"mappings" : {
+        "india" : {
+            "properties" : {
+                "branch" : { "type" : "text" },
+                "region" : {"type" : "text"},
+                "state" : {"type" : "text"}
+            }
+        }
+}'
+
+curl -XPUT 'localhost:9200/sales?pretty' -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "custom_index_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          },
+          "custom_search_analyzer": {
+            "filter": "lowercase",
+            "tokenizer": "custom_tokenizer",
+            "type": "custom"
+          }
+        },
+      "tokenizer": {
+        "custom_tokenizer": {
+          "type": "nGram",
+          "min_gram": 3,
+          "max_gram": 4
+        }
+      }
+    }
+  }
+ },
+"mappings": {
+      "india": {
+         "_all": {
+            "analyzer": "custom_index_analyzer",
+            "search_analyzer": "custom_search_analyzer"
+         },
+          "properties": {
+            "name": {
+               "type": "text"
+            },
+            "title": {
+               "type": "text"
+            },
+            "author": {
+               "type": "string"
+            },
+            "location": {
+               "type": "string"
+            }
+           }
+           }
+}
+}'
+
+
+curl -XGET 'localhost:9200/hadoop/hdfs/_search?q=*:*'
+
+
+curl -XPOST 'localhost:9200/sales/_analyze?pretty' -H 'Content-Type: application/json' -d'
+{
+  "analyzer": "standard",
+   "name": "Nagamallikarjuna Inelu"
+}'
